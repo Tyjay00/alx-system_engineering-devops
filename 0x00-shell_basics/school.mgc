@@ -1,2 +1,4 @@
 #!/bin/bash
- -m magic.mgc School
+ 0    string SCHOOL this is a school file
+ !:mime text/school
+

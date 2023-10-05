@@ -2,7 +2,7 @@
 
 This project is part two of the series introducing networking concepts. In this project, we explore the OSI model, types of networks, MAC and IP addresses, and TCP/UDP protocols. Additionally, there are practical scripts to inspect listening ports and check if a host is on the network.
 
-## Tasks
+## Tasks.
 
 ### 0. OSI Model
     A text file answering questions about the OSI model.

@@ -13,3 +13,5 @@ SSH_KEY=$4
 
 # Use scp to transfer the file
 scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$FILE" "$USERNAME"@"$SERVER_IP":~/
+
+exit 0

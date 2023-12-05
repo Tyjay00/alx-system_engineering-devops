@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# This script is for customizing web-01 and web-02 with an HTTP HEADER
+
+# First, we update the packages before performing installations
+sudo apt-get update
+sudo apt-get install -y nginx
+
+# Next, we create an index.html page
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+# We then perform a "moved permanently redirection" (301)
+new_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/Tyjay00 permanent;"
+sudo sed -i "s/server_name _;/$new_string/" /etc/nginx/sites-enabled/default
+
+# Now, we create a 404 Custom error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+new_string="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+
+sudo sed -i "s/listen 80 default_server;/$new_string/" /etc/nginx/sites-enabled/default
+
+# We test the configurations for syntax errors
+sudo nginx -t
+
+# Finally, we restart nginx to implement the changes
+sudo service nginx restart
+

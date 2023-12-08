@@ -1,26 +1,19 @@
-#!/bin/env bash
-# Displays information about subdomains.
+#!/usr/bin/env bash
+# This scripts displays information about subdomains.
 
-# Function to get IP address
-get_ip() {
-  local domain=$1
-  local ip=$(dig +short "$domain" | awk 'NR==1{print $1}')
-  echo "$ip"
+domain_information() {
+    local domain="$1"
+    local subdomain="$2"
+    local line
+    line=$(dig "$subdomain"."$domain" | awk '/ANSWER SECTION:/ {getline; print; getline; print}')
+    echo "$subdomain $line" | awk '{printf "The subdomain %s is a %s record and points to %s\n", $1, $2, $3}'
 }
 
-domain=$1
-
-declare -a subdomains=("www" "lb-01" "web-01" "web-02")
-
-if [ $# -eq 2 ]; then
-  subdomains=($2)
+if [ "$#" -eq 1 ]; then
+    domain_information "$1" "www"
+    domain_information "$1" "lb-01"
+    domain_information "$1" "web-01"
+    domain_information "$1" "web-02"
+elif [ "$#" -eq 2 ]; then
+    domain_information "$1" "$2"
 fi
-
-record_type="A"
-
-
-for subdomain in "${subdomains[@]}"
-do
-  ip=$(get_ip "$subdomain.$domain"
-  echo "The subdomain $subdomain.$domain is a $record_type record and points to $ip"
-done

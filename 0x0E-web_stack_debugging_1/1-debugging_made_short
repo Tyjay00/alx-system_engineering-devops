@@ -2,11 +2,15 @@
 
 # Configures an Nginx server to listen on port 80.
 
-# creates a symbolic link between the Nginx config file and the enabled sites dir
+# Creates a symbolic link between the Nginx config file and the enabled sites dir
 ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Restarts Nginx
-service nginx start
+# Restarts Nginx using systemctl
+systemctl restart nginx
 
-# Terminates the first nginx process ID
+# Waits for Nginx to restart (optional)
+sleep 2
+
+# Terminates the first Nginx process ID
 kill "$(pgrep 'nginx' | head -1)"
+

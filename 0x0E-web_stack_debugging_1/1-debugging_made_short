@@ -9,4 +9,4 @@ ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 service nginx start
 
 # Terminates the first nginx process ID
-kill "$(pgep 'nginx' | head -1)" 
+kill "$(pgrep 'nginx' | head -1)"

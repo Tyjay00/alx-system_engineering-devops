@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """
-A script that utilizes a REST API, for a given employee ID,
-retrieves information about their TODO list progress,
-and exports data in the JSON format.
+A script that utilizes a REST API to retrieve information about a given
+employee's TODO list progress and exports the data in JSON format.
 """
 
 import json
@@ -12,37 +11,25 @@ from sys import argv
 
 if __name__ == "__main__":
 
-    sessionReq = requests.Session()
+    import json
+    import requests
+    import sys
 
-    # Extract employee ID from command line arguments
-    idEmp = argv[1]
-    
-    # API URLs for TODO list and employee details
-    idURL = 'https://jsonplaceholder.typicode.com/users/{}/todos'.format(idEmp)
-    nameURL = 'https://jsonplaceholder.typicode.com/users/{}'.format(idEmp)
+    users = requests.get("https://jsonplaceholder.typicode.com/users")
+    users = users.json()
+    todos = requests.get('https://jsonplaceholder.typicode.com/todos')
+    todos = todos.json()
+    todoAll = {}
 
-    # Fetch data from the API
-    employee = sessionReq.get(idURL)
-    employeeName = sessionReq.get(nameURL)
+    for user in users:
+        taskList = []
+        for task in todos:
+            if task.get('userId') == user.get('id'):
+                taskDict = {"username": user.get('username'),
+                            "task": task.get('title'),
+                            "completed": task.get('completed')}
+                taskList.append(taskDict)
+        todoAll[user.get('id')] = taskList
 
-    # Parse JSON responses
-    json_req = employee.json()
-    usr = employeeName.json()['username']
-
-    # Prepare data for JSON export
-    totalTasks = []
-    updateUser = {}
-
-    for all_Emp in json_req:
-        totalTasks.append(
-            {
-                "task": all_Emp.get('title'),
-                "completed": all_Emp.get('completed'),
-                "username": usr,
-            })
-    updateUser[idEmp] = totalTasks
-
-    # Export data to a JSON file
-    file_Json = idEmp + ".json"
-    with open(file_Json, 'w') as f:
-        json.dump(updateUser, f)
+    with open('todo_all_employees.json', mode='w') as f:
+        json.dump(todoAll, f)

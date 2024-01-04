@@ -16,7 +16,6 @@ if __name__ == "__main__":
 
     # Extract employee ID from command line arguments
     idEmp = argv[1]
-    
     # API URLs for TODO list and employee details
     idURL = 'https://jsonplaceholder.typicode.com/users/{}/todos'.format(idEmp)
     nameURL = 'https://jsonplaceholder.typicode.com/users/{}'.format(idEmp)

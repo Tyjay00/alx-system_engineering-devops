@@ -1,36 +1,27 @@
-#!/usr/bin/python3
-"""Function to query subscribers on a given Reddit subreddit."""
 import requests
 
-
 def number_of_subscribers(subreddit):
-    """Return the total number of subscribers on a given subreddit."""
-    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
-    headers = {
-        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
-    }
-    
+    url = f'https://www.reddit.com/r/{subreddit}/about.json'
+    headers = {'User-Agent': 'YourCustomUserAgent'}  # Replace with an appropriate user agent
+
     try:
         response = requests.get(url, headers=headers, allow_redirects=False)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
 
-        if response.status_code == 404:
+        data = response.json().get("data")
+        subscribers = data.get("subscribers")
+        return subscribers
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
             print(f"Subreddit '{subreddit}' not found.")
-            return 0
-
-        results = response.json().get("data")
-        return results.get("subscribers")
-
+        else:
+            print(f"HTTP error: {e}")
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
-        return 0
+        print(f"Request error: {e}")
 
-if __name__ == "__main__":
-    import sys
+    return 0  # Return 0 if there's an error or if the subreddit is not found
 
-    if len(sys.argv) < 2:
-        print("Usage: {} <subreddit>".format(sys.argv[0]))
-    else:
-        subreddit = sys.argv[1]
-        subscribers = number_of_subscribers(subreddit)
-        print(f"Subreddit '{subreddit}' has {subscribers} subscribers.")
+# Example usage:
+subreddit_name = 'programming'
+subscribers_count = number_of_subscribers(subreddit_name)
+print(f"The subreddit r/{subreddit_name} has {subscribers_count} subscribers.")

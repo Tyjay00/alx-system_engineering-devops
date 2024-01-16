@@ -9,8 +9,28 @@ def number_of_subscribers(subreddit):
     headers = {
         "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
     }
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code == 404:
+    
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+
+        if response.status_code == 404:
+            print(f"Subreddit '{subreddit}' not found.")
+            return 0
+
+        results = response.json().get("data")
+        return results.get("subscribers")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
         return 0
-    results = response.json().get("data")
-    return results.get("subscribers")
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Usage: {} <subreddit>".format(sys.argv[0]))
+    else:
+        subreddit = sys.argv[1]
+        subscribers = number_of_subscribers(subreddit)
+        print(f"Subreddit '{subreddit}' has {subscribers} subscribers.")
